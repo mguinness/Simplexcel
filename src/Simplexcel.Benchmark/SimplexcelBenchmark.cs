@@ -9,7 +9,19 @@ namespace Simplexcel.Benchmark
     [RyuJitX64Job]
     public class SimplexcelBenchmark
     {
+        // Starting Point: 17.26 KB for NoSave, 273.01 KB for Minimal.
+
         [Benchmark]
+        public void NoSave()
+        {
+            var wb = new Workbook();
+            var ws = new Worksheet("Test");
+            ws.Cells[0, 0] = "Test";
+            wb.Add(ws);
+            wb.SaveForBenchmark();
+        }
+
+        /*[Benchmark]
         public void Minimal()
         {
             var wb = new Workbook();
@@ -118,6 +130,6 @@ namespace Simplexcel.Benchmark
             {
                 wb.Save(ms, compress: true);
             }
-        }
+        }*/
     }
 }

@@ -63,6 +63,7 @@ namespace Simplexcel.XlsxInternal
 
                 if (WorkbookRelationships.Count > 0)
                 {
+                    // xl/_rels/workbook.xml.rels
                     pkg.WriteXmlFile(WorkbookRelsXml());
                 }
             }

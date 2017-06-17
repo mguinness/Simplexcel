@@ -86,5 +86,10 @@ namespace Simplexcel
 
             XlsxWriter.Save(this, stream, compress);
         }
+
+        internal void SaveForBenchmark()
+        {
+            XlsxWriter.SaveForBenchmark(this);
+        }
     }
 }

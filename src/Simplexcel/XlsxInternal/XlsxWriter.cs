@@ -24,6 +24,17 @@ namespace Simplexcel.XlsxInternal
             writer.Save(outputStream, compress);
         }
 
+        internal static void SaveForBenchmark(Workbook workbook)
+        {
+            if (workbook.SheetCount == 0)
+            {
+                throw new InvalidOperationException("You are trying to save a Workbook that does not contain any Worksheets.");
+            }
+
+            var writer = new XlsxWriterInternal(workbook);
+            writer.SaveForBenchmark();
+        }
+
         /// <summary>
         /// This does the actual writing by manually creating the XML according to ECMA-376, 3rd Edition, Part 1's SpreadsheetML.
         /// Due to the way state is handled, Save() can only be called once, hence it's a private class around an internal static member that initialized it anew on every Save(Workbook)
@@ -50,7 +61,7 @@ namespace Simplexcel.XlsxInternal
                 _styles = GetXlsxStyles();
             }
 
-            internal void Save(Stream outputStream, bool compress)
+            private void PrepareForSave()
             {
                 // docProps/core.xml
                 var cp = CreateCoreFileProperties();
@@ -91,7 +102,7 @@ namespace Simplexcel.XlsxInternal
                     };
                     if (sheet.PageSetup.PrintRepeatColumns > 0)
                     {
-                        sheetinfo.RepeatCols = "'" + sheet.Name + "'!$A:$" + CellAddressHelper.ColToReference(sheet.PageSetup.PrintRepeatColumns-1);
+                        sheetinfo.RepeatCols = "'" + sheet.Name + "'!$A:$" + CellAddressHelper.ColToReference(sheet.PageSetup.PrintRepeatColumns - 1);
                     }
                     if (sheet.PageSetup.PrintRepeatRows > 0)
                     {
@@ -113,8 +124,17 @@ namespace Simplexcel.XlsxInternal
                 var wb = CreateWorkbookFile(sheetinfos);
                 _package.XmlFiles.Add(wb.Target);
                 _package.Relationships.Add(wb);
+            }
 
-                // xl/_rels/workbook.xml.rels
+            internal void SaveForBenchmark()
+            {
+                PrepareForSave();
+            }
+
+            internal void Save(Stream outputStream, bool compress)
+            {
+                PrepareForSave();
+
                 _package.SaveToStream(outputStream, compress);
             }
 
